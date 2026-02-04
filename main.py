@@ -1,9 +1,12 @@
 import asyncio
-from app.config.config import config, logger
-from app.handler import commands
+
 from aiogram import Bot, Dispatcher
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+
+from app.config.config import config
+from app.config.config import logger
+from app.handler import commands
 
 
 async def bot_start():

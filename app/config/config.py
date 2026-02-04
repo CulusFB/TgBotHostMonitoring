@@ -3,6 +3,7 @@ from loguru import logger
 from dotenv import load_dotenv
 import json
 from pathlib import Path
+from app import __version__
 
 load_dotenv()
 
@@ -15,6 +16,7 @@ logger.add(f"app/logs/logger.log",
 class Config:
     BOT_TOKEN: str
     USERS: list[int]
+    VERSION: str
 
     def __init__(self):
         self.BOT_TOKEN = os.getenv("BOT_TOKEN")
@@ -22,6 +24,7 @@ class Config:
         with (workdir / 'config.json').open() as file:
             data = json.load(file)
         self.USERS = data.get("users")
+        self.VERSION = __version__
 
 
 config = Config()
