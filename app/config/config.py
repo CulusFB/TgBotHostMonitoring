@@ -25,6 +25,8 @@ class Config:
             data = json.load(file)
         self.USERS = data.get("users")
         self.VERSION = __version__
+        if not self.BOT_TOKEN:
+            raise ValueError("Telegram токен не установлен в переменных окружения")
 
 
 config = Config()

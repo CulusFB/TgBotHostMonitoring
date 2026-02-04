@@ -7,6 +7,7 @@ from aiogram.enums import ParseMode
 from app.config.config import config
 from app.config.config import logger
 from app.handler import commands
+from app.services.ping_service import ping_host
 
 
 async def bot_start():
@@ -25,7 +26,9 @@ async def bot_start():
 async def tim():
     # TODO: Сделано для тестирования асинхронного запускать, убрать в будущем
     logger.info("Sleeping async")
-    await asyncio.sleep(10)
+    while True:
+        await ping_host("fbhost-vilage.keenetic.pro")
+        await asyncio.sleep(1)
 
 
 async def main():
