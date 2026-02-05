@@ -3,6 +3,8 @@ import socket
 from typing import Callable
 import asyncio
 from aioping import ping
+
+from .tg_notification import send_all_users
 from ..config.config import logger
 
 
@@ -23,13 +25,26 @@ async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backof
         except socket.gaierror as exp:
 
             logger.error(f"Имя узла или имя службы `{host}` не указано или неизвестно")
-
+            raise ValueError(f"Имя узла или имя службы `{host}` не указано или неизвестно")
         except TimeoutError as exp:
             logger.error(f'Хост `{host}` недоступен')
         finally:
             if attempt == max_attempts:
                 logger.error(f"Все {max_attempts} попытки для `{host}` завершились ошибками")
-                raise TimeoutError("Все попытки подключиться исчерпаны")
+                raise TimeoutError(f"Хост `{host}` недоступен")
             wait_time = delay * (backoff ** (attempt - 1))
             await asyncio.sleep(wait_time)
     return None
+
+
+async def ping_all_hosts(hosts: list[str]):
+    tasks = []
+    for host in hosts:
+        task = asyncio.create_task(ping_host(host))
+        tasks.append(task)
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+    for result in results:
+        if isinstance(result, ValueError):
+            await send_all_users(f"{result} ❌")
+        if isinstance(result, TimeoutError):
+            await send_all_users(f"{result} ❌")
