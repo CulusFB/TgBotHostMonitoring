@@ -7,7 +7,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 
 from app.config.config import config
 from app.config.config import logger
-from app.handler import commands
+from app.handler import commands, callbacks
 from app.services.ping_service import ping_host, ping_all_hosts
 
 
@@ -23,7 +23,7 @@ async def bot_start(bot: Bot = config.BOT):
 
     # Регистриуем роутеры в диспетчере
     dp.include_router(commands.router)
-
+    dp.include_router(callbacks.router)
     # Запускаем полинг
     logger.info('Bot started')
     await dp.start_polling(bot)

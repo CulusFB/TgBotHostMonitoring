@@ -49,7 +49,16 @@ async def ping_all_hosts(hosts: list[Host]):
     for task, result in zip(tasks, results):
         host = task_to_host[task]
         if isinstance(result, ValueError):
-            await send_all_users(
-                f"Для хоста *{host.name}* имя узла или имя службы *{host.address}* не указано или неизвестно ❌")
-        if isinstance(result, TimeoutError):
-            await send_all_users(f"Хост *{host.name}* недоступен ❌")
+            if host.name:
+                host.name = False
+                await send_all_users(
+                    f"Для хоста *{host.name}* имя узла или имя службы *{host.address}* не указано или неизвестно ❌")
+
+        elif isinstance(result, TimeoutError):
+            if host.name:
+                host.name = False
+                await send_all_users(f"Хост *{host.name}* недоступен ❌")
+        else:
+            if not host.name:
+                host.name = True
+                config.HOSTS.edit
