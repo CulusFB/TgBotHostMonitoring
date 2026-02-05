@@ -6,6 +6,7 @@ from aioping import ping
 
 from .tg_notification import send_all_users
 from ..config.config import logger
+from ..models.host import Host
 
 
 async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backoff: float = 2.0):
@@ -37,14 +38,18 @@ async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backof
     return None
 
 
-async def ping_all_hosts(hosts: list[str]):
+async def ping_all_hosts(hosts: list[Host]):
+    task_to_host = {}
     tasks = []
     for host in hosts:
-        task = asyncio.create_task(ping_host(host))
+        task = asyncio.create_task(ping_host(host.address))
         tasks.append(task)
+        task_to_host[task] = host
     results = await asyncio.gather(*tasks, return_exceptions=True)
-    for result in results:
+    for task, result in zip(tasks, results):
+        host = task_to_host[task]
         if isinstance(result, ValueError):
-            await send_all_users(f"{result} ❌")
+            await send_all_users(
+                f"Для хоста *{host.name}* имя узла или имя службы *{host.address}* не указано или неизвестно ❌")
         if isinstance(result, TimeoutError):
-            await send_all_users(f"{result} ❌")
+            await send_all_users(f"Хост *{host.name}* недоступен ❌")
