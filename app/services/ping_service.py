@@ -53,14 +53,15 @@ async def ping_all_hosts(hosts: list[Host]):
                 host.status = False
                 config.HOSTS.edit_host(host)
                 await send_all_users(
-                    f"Для хоста *{host.name}* имя узла или имя службы *{host.address}* не указано или неизвестно ❌")
+                    f"Для хоста *{host.name}* имя узла или имя службы *{host.address}* не указано или неизвестно 🔴")
 
         elif isinstance(result, TimeoutError):
             if host.status:
                 host.status = False
                 config.HOSTS.edit_host(host)
-                await send_all_users(f"Хост *{host.name}* недоступен ❌")
+                await send_all_users(f"Хост *{host.name}* недоступен 🔴")
         else:
             if not host.status:
                 host.status = True
+                await send_all_users(f"Хост *{host.name}* снова доступен 🟢")
                 config.HOSTS.edit_host(host)
