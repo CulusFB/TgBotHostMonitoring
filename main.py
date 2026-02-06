@@ -2,6 +2,7 @@ import asyncio
 from datetime import datetime
 
 from aiogram import Bot, Dispatcher
+from aiogram.fsm.storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 
@@ -17,8 +18,11 @@ async def bot_start(bot: Bot = config.BOT):
                       id='host_checker',
                       replace_existing=True, next_run_time=datetime.now())
     scheduler.start()
+    
+    storage = MemoryStorage()
+
     # Создаем объект диспетчера
-    dp = Dispatcher()
+    dp = Dispatcher(storage=storage)
 
     # Регистриуем роутеры в диспетчере
     dp.include_router(commands.router)

@@ -3,7 +3,7 @@ from aiogram.filters import Command, CommandStart, CommandObject
 from aiogram.fsm.context import FSMContext
 from aiogram.types import Message, InlineKeyboardMarkup
 
-from app.config.config import logger, config
+from app.config import logger, config
 from app.keyboards.menu_kb import create_menu
 from app.lexicon.lexicon import LEXICON_RU
 

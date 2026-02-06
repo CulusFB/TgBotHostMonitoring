@@ -43,3 +43,12 @@ def host_menu_kb(host: Host) -> InlineKeyboardMarkup:
                                         callback_data=f"delete_host_{host.address}"))
     kb_builder.row(InlineKeyboardButton(text=LEXICON_RU.get('back_b'), callback_data="host_list"))
     return kb_builder.as_markup()
+
+
+def edit_host_kb(host: Host) -> InlineKeyboardMarkup:
+    kb_builder = InlineKeyboardBuilder()
+    kb_builder.row(InlineKeyboardButton(text=LEXICON_RU.get("name_b"), callback_data=f'edit_name_host_{host.address}'),
+                   InlineKeyboardButton(text=LEXICON_RU.get("address_b"),
+                                        callback_data=f'edit_address_host_{host.address}'), width=1)
+    kb_builder.row(InlineKeyboardButton(text=LEXICON_RU.get('back_b'), callback_data=f"host_{host.address}"), )
+    return kb_builder.as_markup()
