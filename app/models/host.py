@@ -42,7 +42,6 @@ class Hosts:
 
     def remove_host(self, host: Host) -> list[Host]:
         self.names.remove(host)
-        print(self.names)
         self._save_config()
         return self.names
 

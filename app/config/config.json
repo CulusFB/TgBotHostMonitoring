@@ -1,17 +1,6 @@
 {
   "users": [
-    548881619
   ],
   "hosts": [
-    {
-      "name": "Дача",
-      "address": "fbhost-vilage.keenetic.pro",
-      "status": true
-    },
-    {
-      "name": "Для теста",
-      "address": "192.168.1.79",
-      "status": false
-    }
   ]
 }
