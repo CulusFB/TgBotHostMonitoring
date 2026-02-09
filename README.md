@@ -79,4 +79,4 @@ docker compose up -d
 
 ## Лицензия
 
-MIT License. Подробности в файле LICENSE.
+MIT License. Подробности в файле `LICENSE`.
