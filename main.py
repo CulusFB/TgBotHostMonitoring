@@ -18,13 +18,13 @@ async def bot_start(bot: Bot = config.BOT):
                       id='host_checker',
                       replace_existing=True, next_run_time=datetime.now())
     scheduler.start()
-    
+
     storage = MemoryStorage()
 
     # Создаем объект диспетчера
     dp = Dispatcher(storage=storage)
 
-    # Регистриуем роутеры в диспетчере
+    # Регистрируем роутеры в диспетчере
     dp.include_router(commands.router)
     dp.include_router(callbacks.router)
     dp.include_router(text.router)
