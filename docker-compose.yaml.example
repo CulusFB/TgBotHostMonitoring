@@ -1,0 +1,29 @@
+services:
+  telegram_image_ai:
+    container_name: host_monitoring_bot
+    environment:
+      - BOT_TOKEN={telegram token from bot-father}
+    volumes:
+      - type: bind
+        source: $PWD/config
+        target: /hostMonitor/app/config/files
+        bind:
+        create_host_path: true
+      - type: bind
+        source: $PWD/logs
+        target: /hostMonitor/logs
+        bind:
+          create_host_path: true
+      - type: bind
+        source: $PWD/config.json
+        target: /hostMonitor/config/config.json
+        bind:
+          create_host_path: false
+      - type: bind
+        source: /etc/timezone
+        target: /etc/timezone
+      - type: bind
+        source: /etc/localtime
+        target: /etc/localtime
+    restart: always
+    image: ghcr.io/culusfb/host_monitoring_bot

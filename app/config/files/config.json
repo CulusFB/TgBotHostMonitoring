@@ -1,0 +1,22 @@
+{
+  "users": [
+    548881619
+  ],
+  "hosts": [
+    {
+      "name": "Город",
+      "address": "fbhost.keenetic.pro",
+      "status": true
+    },
+    {
+      "name": "Дача",
+      "address": "fbhost-vilage.keenetic.pro",
+      "status": true
+    },
+    {
+      "name": "VPS",
+      "address": "fbhost.ru",
+      "status": true
+    }
+  ]
+}
