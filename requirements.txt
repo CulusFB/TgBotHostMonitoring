@@ -1,0 +1,5 @@
+loguru >= 0.7.3
+python-dotenv >= 1.2.1
+aiogram >= 3.24.0
+aioping >= 0.4.0
+apscheduler == 3.11.2
