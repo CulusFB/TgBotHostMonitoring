@@ -12,7 +12,8 @@ router = Router()
 
 @router.message(CommandStart(), F.from_user.id.in_(config.USERS))
 async def process_start_command(message: Message, state: FSMContext):
-    logger.info(message.from_user.id)
+    logger.info(
+        f"Пользователь id: `{message.from_user.id}` username: `{message.from_user.username}` использовал `/start`")
     await message.reply(text=LEXICON_RU.get('main_menu'), reply_markup=create_menu())
     await state.clear()
 

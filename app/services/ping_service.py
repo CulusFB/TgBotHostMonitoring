@@ -31,7 +31,7 @@ async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backof
             logger.error(f'Хост `{host}` недоступен')
         finally:
             if attempt == max_attempts:
-                logger.error(f"Все {max_attempts} попытки для `{host}` завершились ошибками")
+                logger.error(f"Все {max_attempts} попытки для хоста `{host}` завершились с ошибками")
                 raise TimeoutError(f"Хост `{host}` недоступен")
             wait_time = delay * (backoff ** (attempt - 1))
             await asyncio.sleep(wait_time)
@@ -63,5 +63,6 @@ async def ping_all_hosts(hosts: list[Host]):
         else:
             if not host.status:
                 host.status = True
+                logger.info(f"Хост `{host.name}` снова доступен")
                 await send_all_users(f"Хост *{host.name}* снова доступен 🟢")
                 config.HOSTS.edit_host(host)
