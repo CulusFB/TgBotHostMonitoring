@@ -8,17 +8,12 @@ services:
         source: $PWD/config
         target: /hostMonitor/app/config/files
         bind:
-        create_host_path: true
+          create_host_path: true
       - type: bind
         source: $PWD/logs
         target: /hostMonitor/logs
         bind:
           create_host_path: true
-      - type: bind
-        source: $PWD/config.json
-        target: /hostMonitor/config/config.json
-        bind:
-          create_host_path: false
       - type: bind
         source: /etc/timezone
         target: /etc/timezone

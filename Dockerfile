@@ -1,4 +1,4 @@
-FROM --platform=$BUILDPLATFORM  python:3.14-alpine
+FROM --platform=$TARGETPLATFORM  python:3.14-alpine
 
 LABEL authors="CulusFB"
 
