@@ -11,27 +11,50 @@ from app.handler import commands, callbacks, text
 from app.services.ping_service import ping_host, ping_all_hosts
 
 
-async def bot_start(bot: Bot = config.BOT):
+async def on_startup(bot: Bot):
     # Создаем задачу проверки хостов
     scheduler = AsyncIOScheduler()
-    scheduler.add_job(func=ping_all_hosts, args=[config.HOSTS.names], trigger=IntervalTrigger(minutes=1),
-                      id='host_checker',
-                      replace_existing=True, next_run_time=datetime.now())
+    scheduler.add_job(
+        ping_all_hosts,
+        args=[config.HOSTS.names],
+        trigger=IntervalTrigger(minutes=1),
+        id='host_checker',
+        replace_existing=True,
+        next_run_time=datetime.now()
+    )
     scheduler.start()
+    # сохраняем ссылку
+    bot.scheduler = scheduler
+    logger.info("Scheduler started")
 
+
+async def on_shutdown(bot: Bot):
+    scheduler = getattr(bot, "scheduler", None)
+    if scheduler:
+        scheduler.shutdown(wait=False)
+        logger.info("Scheduler stopped")
+
+
+async def main():
+    bot = Bot(token=config.BOT.token)
     storage = MemoryStorage()
-
-    # Создаем объект диспетчера
     dp = Dispatcher(storage=storage)
 
-    # Регистрируем роутеры в диспетчере
     dp.include_router(commands.router)
     dp.include_router(callbacks.router)
     dp.include_router(text.router)
-    # Запускаем полинг
-    logger.info('Bot started')
-    await dp.start_polling(bot)
+
+    dp.startup.register(on_startup)
+    dp.shutdown.register(on_shutdown)
+
+    logger.info("Bot started")
+    while True:
+        try:
+            await dp.start_polling(bot)
+        except Exception:
+            logger.exception("Polling crashed, restarting...")
+            await asyncio.sleep(5)
 
 
-if __name__ == '__main__':
-    asyncio.run(bot_start())
+if __name__ == "__main__":
+    asyncio.run(main())
