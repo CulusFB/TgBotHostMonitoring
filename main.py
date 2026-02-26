@@ -2,6 +2,8 @@ import asyncio
 from datetime import datetime
 
 from aiogram import Bot, Dispatcher
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 from aiogram.fsm.storage.memory import MemoryStorage
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from apscheduler.triggers.interval import IntervalTrigger
@@ -36,7 +38,7 @@ async def on_shutdown(bot: Bot):
 
 
 async def main():
-    bot = Bot(token=config.BOT.token)
+    bot = Bot(token=config.BOT.token, default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN))
     storage = MemoryStorage()
     dp = Dispatcher(storage=storage)
 
