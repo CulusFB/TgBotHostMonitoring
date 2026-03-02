@@ -18,6 +18,7 @@ async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backof
     :param backoff: множитель для увеличения задержки
     :return:
     """
+    last_exception = None
     for attempt in range(1, max_attempts + 1):
         if attempt > 1:
             logger.warning(f"Попытка {attempt}/{max_attempts} для `{host}`")
@@ -26,16 +27,15 @@ async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backof
         except socket.gaierror as exp:
 
             logger.warning(f"Имя узла или имя службы `{host}` не указано или неизвестно")
-            raise ValueError(f"Имя узла или имя службы `{host}` не указано или неизвестно")
+            last_exception = ValueError(f"Имя узла или имя службы `{host}` не указано или неизвестно")
         except TimeoutError as exp:
             logger.warning(f'Хост `{host}` недоступен')
-        finally:
-            if attempt == max_attempts:
-                logger.warning(f"Все {max_attempts} попытки для хоста `{host}` завершились с ошибками")
-                raise TimeoutError(f"Хост `{host}` недоступен")
+            last_exception = TimeoutError(f"Хост `{host}` недоступен")
+        if attempt < max_attempts:
             wait_time = delay * (backoff ** (attempt - 1))
             await asyncio.sleep(wait_time)
-    return None
+    logger.warning(f"Все {max_attempts} попытки для хоста `{host}` завершились с ошибками")
+    raise last_exception
 
 
 async def ping_all_hosts(hosts: list[Host]):
