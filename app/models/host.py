@@ -50,7 +50,5 @@ class Hosts:
         return [x for x in self.names if x.address == address][0]
 
     def edit_host(self, host: Host) -> list[Host]:
-        self.names.remove(host)
-        self.names.append(host)
         self._save_config()
         return self.names
