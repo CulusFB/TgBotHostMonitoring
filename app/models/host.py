@@ -18,11 +18,12 @@ class Host:
 
 
 class Hosts:
-    names: list[Host] = []
+    names: list[Host]
     config_file: Path
 
     def __init__(self, config_file: Path) -> None:
         self.config_file = config_file
+        self.names = []
         with config_file.open() as f:
             data = json.load(f).get("hosts")
         for host in data:
