@@ -1,7 +1,7 @@
 from aiogram import Router, F
-from aiogram.filters import Command, CommandStart, CommandObject
+from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, InlineKeyboardMarkup
+from aiogram.types import Message
 
 from app.config import logger, config
 from app.keyboards.menu_kb import create_menu

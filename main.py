@@ -8,7 +8,7 @@ from apscheduler.triggers.interval import IntervalTrigger
 
 from app.config import config, logger
 from app.handler import commands, callbacks, text
-from app.services.ping_service import ping_host, ping_all_hosts
+from app.services.ping_service import ping_all_hosts
 
 
 async def on_startup(bot: Bot):

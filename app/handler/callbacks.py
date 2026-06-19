@@ -1,4 +1,3 @@
-import asyncio
 from typing import Optional
 
 from aiogram import Router, F, html
@@ -83,7 +82,7 @@ async def check_host(callback: CallbackQuery):
     logger.info(f"Ручной запуск проверки хоста {host_name_address(host)}")
     await callback.message.edit_text(text="Подождите идёт проверка доступности")
     try:
-        result = await ping_host(host.address)
+        await ping_host(host.address)
         host.status = True
         logger.info(f"Хост доступен {host_name_address(host)}")
         await callback.message.edit_text(text=f"Хост <b>{html.quote(host.name)}</b> доступен 🟢",
