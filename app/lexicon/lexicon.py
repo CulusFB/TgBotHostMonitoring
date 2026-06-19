@@ -16,7 +16,8 @@ LEXICON_RU: dict[str, str] = {
     "name_b": "🏷️ Имя",
     "address_b": "🔗 Адрес",
     "success_add_host": "Хост успешно добавлен",
-    "success_edit": "Изменения сохранены"
+    "success_edit": "Изменения сохранены",
+    "host_not_found": "Хост не найден, возможно он был удалён"
 }
 
 LEXICON_COMMANDS: dict[str, str] = {
