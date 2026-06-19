@@ -42,15 +42,9 @@ async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backof
 
 
 async def ping_all_hosts(hosts: list[Host]):
-    task_to_host = {}
-    tasks = []
-    for host in hosts:
-        task = asyncio.create_task(ping_host(host.address))
-        tasks.append(task)
-        task_to_host[task] = host
+    tasks = [ping_host(host.address) for host in hosts]
     results = await asyncio.gather(*tasks, return_exceptions=True)
-    for task, result in zip(tasks, results):
-        host = task_to_host[task]
+    for host, result in zip(hosts, results):
         if isinstance(result, ValueError):
             if host.status:
                 host.status = False
