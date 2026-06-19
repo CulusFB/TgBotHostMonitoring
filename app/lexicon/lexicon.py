@@ -19,10 +19,3 @@ LEXICON_RU: dict[str, str] = {
     "success_edit": "Изменения сохранены",
     "host_not_found": "Хост не найден, возможно он был удалён"
 }
-
-LEXICON_COMMANDS: dict[str, str] = {
-    '/beginning': 'В начало книги',
-    '/continue': 'Продолжить чтение',
-    '/bookmarks': 'Мои закладки',
-    '/help': 'Справка по работе бота'
-}
