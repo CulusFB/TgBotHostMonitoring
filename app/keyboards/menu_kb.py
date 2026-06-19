@@ -1,3 +1,5 @@
+from typing import Optional
+
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 
@@ -23,7 +25,9 @@ def create_menu() -> InlineKeyboardMarkup:
     return kb_builder.as_markup()
 
 
-def host_list_kb(hosts: list[Host] = config.HOSTS.names) -> InlineKeyboardMarkup:
+def host_list_kb(hosts: Optional[list[Host]] = None) -> InlineKeyboardMarkup:
+    if hosts is None:
+        hosts = config.HOSTS.names
     kb_builder = InlineKeyboardBuilder()
     buttons = []
     for host in hosts:
