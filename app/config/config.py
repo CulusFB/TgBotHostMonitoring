@@ -36,7 +36,7 @@ class Config:
         self._ensure_config(config_file, example_file)
         with config_file.open() as file:
             data = json.load(file)
-        self.USERS = data.get("users")
+        self.USERS = data.get("users") or []
         self.VERSION = __version__
 
         self.HOSTS = Hosts(config_file=config_file)
