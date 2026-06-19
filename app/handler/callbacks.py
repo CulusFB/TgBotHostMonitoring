@@ -98,7 +98,7 @@ async def check_host(callback: CallbackQuery):
             reply_markup=host_menu_kb(host))
 
 
-    except TimeoutError:
+    except (TimeoutError, OSError):
         host.status = False
         config.HOSTS.edit_host(host)
         logger.warning(f"Хост недоступен {host_name_address(host)}")
