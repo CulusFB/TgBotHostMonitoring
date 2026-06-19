@@ -1,16 +1,17 @@
 from aiogram import Router, F
-from aiogram.filters import Command, CommandStart, CommandObject
+from aiogram.filters import Command, CommandStart
 from aiogram.fsm.context import FSMContext
-from aiogram.types import Message, InlineKeyboardMarkup
+from aiogram.types import Message
 
 from app.config import logger, config
 from app.keyboards.menu_kb import create_menu
 from app.lexicon.lexicon import LEXICON_RU
 
 router = Router()
+router.message.filter(F.from_user.id.in_(config.USERS))
 
 
-@router.message(CommandStart(), F.from_user.id.in_(config.USERS))
+@router.message(CommandStart())
 async def process_start_command(message: Message, state: FSMContext):
     logger.info(
         f"Пользователь id: `{message.from_user.id}` username: `{message.from_user.username}` использовал `/start`")
@@ -18,6 +19,6 @@ async def process_start_command(message: Message, state: FSMContext):
     await state.clear()
 
 
-@router.message(Command('version'), F.from_user.id.in_(config.USERS))
+@router.message(Command('version'))
 async def bot_version(message: Message):
     await message.answer(f"Версия бота <code>{config.VERSION}</code>")

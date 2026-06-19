@@ -1,4 +1,3 @@
-import asyncio
 from typing import Optional
 
 from aiogram import Router, F, html
@@ -14,6 +13,7 @@ from app.services.ping_service import ping_host
 from app.states.states import FSMHostForm, FSMHostEditForm
 
 router = Router()
+router.callback_query.filter(F.from_user.id.in_(config.USERS))
 
 
 async def resolve_host(callback: CallbackQuery, prefix: str) -> Optional[Host]:
@@ -27,27 +27,27 @@ async def resolve_host(callback: CallbackQuery, prefix: str) -> Optional[Host]:
     return host
 
 
-@router.callback_query(F.data == "host_list", F.from_user.id.in_(config.USERS))
+@router.callback_query(F.data == "host_list")
 async def host_list(callback: CallbackQuery):
     await callback.answer()
     await callback.message.edit_text(text=LEXICON_RU.get("host_list"), reply_markup=host_list_kb())
 
 
-@router.callback_query(F.data == "main_menu", F.from_user.id.in_(config.USERS))
+@router.callback_query(F.data == "main_menu")
 async def main_menu(callback: CallbackQuery):
     await callback.answer()
     await callback.message.edit_text(text=LEXICON_RU.get('main_menu'),
                                      reply_markup=create_menu())
 
 
-@router.callback_query(F.data == "add_host", F.from_user.id.in_(config.USERS))
+@router.callback_query(F.data == "add_host")
 async def add_host(callback: CallbackQuery, state: FSMContext):
     await callback.answer()
     await callback.message.answer(text=LEXICON_RU.get('host_name'))
     await state.set_state(FSMHostForm.name)
 
 
-@router.callback_query(F.data.startswith("host_"), F.from_user.id.in_(config.USERS))
+@router.callback_query(F.data.startswith("host_"))
 async def host_(callback: CallbackQuery):
     host = await resolve_host(callback, "host_")
     if host is None:
@@ -61,7 +61,7 @@ async def host_(callback: CallbackQuery):
         reply_markup=host_menu_kb(host))
 
 
-@router.callback_query(F.data.startswith("delete_host_"), F.from_user.id.in_(config.USERS))
+@router.callback_query(F.data.startswith("delete_host_"))
 async def delete_host(callback: CallbackQuery):
     host = await resolve_host(callback, "delete_host_")
     if host is None:
@@ -73,7 +73,7 @@ async def delete_host(callback: CallbackQuery):
                                      reply_markup=host_list_kb())
 
 
-@router.callback_query(F.data.startswith("check_host_"), F.from_user.id.in_(config.USERS))
+@router.callback_query(F.data.startswith("check_host_"))
 async def check_host(callback: CallbackQuery):
     host = await resolve_host(callback, "check_host_")
     if host is None:
@@ -82,7 +82,7 @@ async def check_host(callback: CallbackQuery):
     logger.info(f"Ручной запуск проверки хоста {host_name_address(host)}")
     await callback.message.edit_text(text="Подождите идёт проверка доступности")
     try:
-        result = await ping_host(host.address)
+        await ping_host(host.address)
         host.status = True
         logger.info(f"Хост доступен {host_name_address(host)}")
         await callback.message.edit_text(text=f"Хост <b>{html.quote(host.name)}</b> доступен 🟢",
@@ -106,7 +106,7 @@ async def check_host(callback: CallbackQuery):
                                          reply_markup=host_menu_kb(host))
 
 
-@router.callback_query(F.data.startswith("edit_host_"), F.from_user.id.in_(config.USERS))
+@router.callback_query(F.data.startswith("edit_host_"))
 async def edit_host(callback: CallbackQuery):
     host = await resolve_host(callback, "edit_host_")
     if host is None:
@@ -115,7 +115,7 @@ async def edit_host(callback: CallbackQuery):
     await callback.message.edit_text(text="Выберите изменяемый параметр", reply_markup=edit_host_kb(host))
 
 
-@router.callback_query(F.data.startswith("edit_name_host_"), F.from_user.id.in_(config.USERS))
+@router.callback_query(F.data.startswith("edit_name_host_"))
 async def edit_host_name(callback: CallbackQuery, state: FSMContext):
     host = await resolve_host(callback, "edit_name_host_")
     if host is None:
@@ -126,8 +126,8 @@ async def edit_host_name(callback: CallbackQuery, state: FSMContext):
     await state.update_data(address=host.address)
 
 
-@router.callback_query(F.data.startswith("edit_address_host_"), F.from_user.id.in_(config.USERS))
-async def edit_host_name(callback: CallbackQuery, state: FSMContext):
+@router.callback_query(F.data.startswith("edit_address_host_"))
+async def edit_host_address(callback: CallbackQuery, state: FSMContext):
     host = await resolve_host(callback, "edit_address_host_")
     if host is None:
         return

@@ -12,6 +12,7 @@ from app.states.states import FSMHostForm, FSMHostEditForm
 from app.config import logger, config
 
 router = Router()
+router.message.filter(F.from_user.id.in_(config.USERS))
 
 
 async def resolve_host(message: Message, state: FSMContext, address: str) -> Optional[Host]:
@@ -57,7 +58,7 @@ async def edit_host_name(message: Message, state: FSMContext):
 
 
 @router.message(StateFilter(FSMHostEditForm.address))
-async def edit_host_name(message: Message, state: FSMContext):
+async def edit_host_address(message: Message, state: FSMContext):
     state_date = await state.get_data()
     host = await resolve_host(message, state, state_date.get('address'))
     if host is None:

@@ -14,7 +14,7 @@ from aiogram import Bot
 load_dotenv()
 
 # Добавляем лологирование
-logger.add(f"app/logs/logger.log",
+logger.add("app/logs/logger.log",
            format="{time} - {level} - {message}",
            level="INFO", rotation="100 Mb", compression="zip")
 

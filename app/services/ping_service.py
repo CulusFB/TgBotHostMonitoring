@@ -1,6 +1,4 @@
-import functools
 import socket
-from typing import Callable
 import asyncio
 from aiogram import html
 from aioping import ping
@@ -25,11 +23,10 @@ async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backof
             logger.warning(f"Попытка {attempt}/{max_attempts} для `{host}`")
         try:
             return await ping(host)
-        except socket.gaierror as exp:
-
+        except socket.gaierror:
             logger.warning(f"Имя узла или имя службы `{host}` не указано или неизвестно")
             last_exception = ValueError(f"Имя узла или имя службы `{host}` не указано или неизвестно")
-        except TimeoutError as exp:
+        except TimeoutError:
             logger.warning(f'Хост `{host}` недоступен')
             last_exception = TimeoutError(f"Хост `{host}` недоступен")
         except OSError as exp:
@@ -45,15 +42,9 @@ async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backof
 
 
 async def ping_all_hosts(hosts: list[Host]):
-    task_to_host = {}
-    tasks = []
-    for host in hosts:
-        task = asyncio.create_task(ping_host(host.address))
-        tasks.append(task)
-        task_to_host[task] = host
+    tasks = [ping_host(host.address) for host in hosts]
     results = await asyncio.gather(*tasks, return_exceptions=True)
-    for task, result in zip(tasks, results):
-        host = task_to_host[task]
+    for host, result in zip(hosts, results):
         if isinstance(result, ValueError):
             if host.status:
                 host.status = False
