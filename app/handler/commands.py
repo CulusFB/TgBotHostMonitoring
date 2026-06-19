@@ -20,4 +20,4 @@ async def process_start_command(message: Message, state: FSMContext):
 
 @router.message(Command('version'), F.from_user.id.in_(config.USERS))
 async def bot_version(message: Message):
-    await message.answer(f"Версия бота `{config.VERSION}`")
+    await message.answer(f"Версия бота <code>{config.VERSION}</code>")

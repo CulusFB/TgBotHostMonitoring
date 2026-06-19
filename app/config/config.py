@@ -40,7 +40,7 @@ class Config:
         self.VERSION = __version__
 
         self.HOSTS = Hosts(config_file=config_file)
-        self.BOT = Bot(token=self.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.MARKDOWN))
+        self.BOT = Bot(token=self.BOT_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
     @staticmethod
     def _ensure_config(config_file: Path, example_file: Path):

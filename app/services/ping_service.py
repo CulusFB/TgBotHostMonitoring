@@ -2,6 +2,7 @@ import functools
 import socket
 from typing import Callable
 import asyncio
+from aiogram import html
 from aioping import ping
 from app.config.config import config
 from .tg_notification import send_all_users
@@ -56,16 +57,17 @@ async def ping_all_hosts(hosts: list[Host]):
                 host.status = False
                 config.HOSTS.edit_host(host)
                 await send_all_users(
-                    f"Для хоста *{host.name}* имя узла или имя службы *{host.address}* не указано или неизвестно 🔴")
+                    f"Для хоста <b>{html.quote(host.name)}</b> имя узла или имя службы "
+                    f"<b>{html.quote(host.address)}</b> не указано или неизвестно 🔴")
 
         elif isinstance(result, Exception):
             if host.status:
                 host.status = False
                 config.HOSTS.edit_host(host)
-                await send_all_users(f"Хост *{host.name}* недоступен 🔴")
+                await send_all_users(f"Хост <b>{html.quote(host.name)}</b> недоступен 🔴")
         else:
             if not host.status:
                 host.status = True
                 logger.info(f"Хост `{host.name}` снова доступен")
-                await send_all_users(f"Хост *{host.name}* снова доступен 🟢")
+                await send_all_users(f"Хост <b>{html.quote(host.name)}</b> снова доступен 🟢")
                 config.HOSTS.edit_host(host)

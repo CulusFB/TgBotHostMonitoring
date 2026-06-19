@@ -1,7 +1,7 @@
 import asyncio
 from typing import Optional
 
-from aiogram import Router, F
+from aiogram import Router, F, html
 from aiogram.fsm.context import FSMContext
 from aiogram.types import CallbackQuery
 from app.config import logger
@@ -54,8 +54,11 @@ async def host_(callback: CallbackQuery):
         return
     await callback.answer()
     available = '🟢' if host.status else '🔴'
-    await callback.message.edit_text(text=f"*Имя:* {host.name}\n*Адрес:* {host.address}\n*Доступность:* {available}",
-                                     reply_markup=host_menu_kb(host))
+    await callback.message.edit_text(
+        text=f"<b>Имя:</b> {html.quote(host.name)}\n"
+             f"<b>Адрес:</b> {html.quote(host.address)}\n"
+             f"<b>Доступность:</b> {available}",
+        reply_markup=host_menu_kb(host))
 
 
 @router.callback_query(F.data.startswith("delete_host_"), F.from_user.id.in_(config.USERS))
@@ -66,7 +69,8 @@ async def delete_host(callback: CallbackQuery):
     await callback.answer()
     config.HOSTS.remove_host(host)
     logger.info(f"Хост удалён {host_name_address(host)}")
-    await callback.message.edit_text(text=LEXICON_RU.get("deleted_host") + host.name, reply_markup=host_list_kb())
+    await callback.message.edit_text(text=LEXICON_RU.get("deleted_host") + html.quote(host.name),
+                                     reply_markup=host_list_kb())
 
 
 @router.callback_query(F.data.startswith("check_host_"), F.from_user.id.in_(config.USERS))
@@ -81,22 +85,25 @@ async def check_host(callback: CallbackQuery):
         result = await ping_host(host.address)
         host.status = True
         logger.info(f"Хост доступен {host_name_address(host)}")
-        await callback.message.edit_text(text=f"Хост *{host.name}* доступен 🟢", reply_markup=host_menu_kb(host))
+        await callback.message.edit_text(text=f"Хост <b>{html.quote(host.name)}</b> доступен 🟢",
+                                         reply_markup=host_menu_kb(host))
         config.HOSTS.edit_host(host)
     except ValueError:
         host.status = False
         config.HOSTS.edit_host(host)
         logger.warning(f"Для хоста `{host.name}` имя узла или имя службы `{host.address}` не указано или неизвестно")
-        await callback.message.edit_text(text=
-                                         f"Для хоста *{host.name}* имя узла или имя службы *{host.address}* не указано или неизвестно 🔴",
-                                         reply_markup=host_menu_kb(host))
+        await callback.message.edit_text(
+            text=f"Для хоста <b>{html.quote(host.name)}</b> имя узла или имя службы "
+                 f"<b>{html.quote(host.address)}</b> не указано или неизвестно 🔴",
+            reply_markup=host_menu_kb(host))
 
 
     except TimeoutError:
         host.status = False
         config.HOSTS.edit_host(host)
         logger.warning(f"Хост недоступен {host_name_address(host)}")
-        await callback.message.edit_text(text=f"Хост *{host.name}* недоступен 🔴", reply_markup=host_menu_kb(host))
+        await callback.message.edit_text(text=f"Хост <b>{html.quote(host.name)}</b> недоступен 🔴",
+                                         reply_markup=host_menu_kb(host))
 
 
 @router.callback_query(F.data.startswith("edit_host_"), F.from_user.id.in_(config.USERS))
