@@ -1,3 +1,5 @@
+from typing import Optional
+
 from aiogram import Router, F
 from aiogram.filters import StateFilter
 from aiogram.fsm.context import FSMContext
@@ -10,6 +12,18 @@ from app.states.states import FSMHostForm, FSMHostEditForm
 from app.config import logger, config
 
 router = Router()
+
+
+async def resolve_host(message: Message, state: FSMContext, address: str) -> Optional[Host]:
+    """Возвращает хост по адресу из состояния.
+
+    Если хост не найден (например, удалён) — сообщает об этом и сбрасывает состояние.
+    """
+    host = config.HOSTS.get_host(address)
+    if host is None:
+        await message.answer(text=LEXICON_RU.get("host_not_found"))
+        await state.clear()
+    return host
 
 
 @router.message(StateFilter(FSMHostForm.name))
@@ -31,7 +45,9 @@ async def add_host_address(message: Message, state: FSMContext):
 @router.message(StateFilter(FSMHostEditForm.name))
 async def edit_host_name(message: Message, state: FSMContext):
     state_date = await state.get_data()
-    host = config.HOSTS.get_host(state_date.get('address'))
+    host = await resolve_host(message, state, state_date.get('address'))
+    if host is None:
+        return
     old_name = host.name
     host.name = message.text
     config.HOSTS.edit_host(host)
@@ -43,7 +59,9 @@ async def edit_host_name(message: Message, state: FSMContext):
 @router.message(StateFilter(FSMHostEditForm.address))
 async def edit_host_name(message: Message, state: FSMContext):
     state_date = await state.get_data()
-    host = config.HOSTS.get_host(state_date.get('address'))
+    host = await resolve_host(message, state, state_date.get('address'))
+    if host is None:
+        return
     old_address = host.address
     host.address = message.text
     config.HOSTS.edit_host(host)

@@ -3,6 +3,7 @@ import os
 import tempfile
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Optional
 
 
 @dataclass
@@ -54,8 +55,8 @@ class Hosts:
         self._save_config()
         return self.names
 
-    def get_host(self, address: str) -> Host:
-        return [x for x in self.names if x.address == address][0]
+    def get_host(self, address: str) -> Optional[Host]:
+        return next((x for x in self.names if x.address == address), None)
 
     def edit_host(self, host: Host) -> list[Host]:
         self._save_config()
