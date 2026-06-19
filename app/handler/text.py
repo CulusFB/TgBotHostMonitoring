@@ -12,6 +12,7 @@ from app.states.states import FSMHostForm, FSMHostEditForm
 from app.config import logger, config
 
 router = Router()
+router.message.filter(F.from_user.id.in_(config.USERS))
 
 
 async def resolve_host(message: Message, state: FSMContext, address: str) -> Optional[Host]:
