@@ -127,7 +127,7 @@ async def edit_host_name(callback: CallbackQuery, state: FSMContext):
 
 
 @router.callback_query(F.data.startswith("edit_address_host_"))
-async def edit_host_name(callback: CallbackQuery, state: FSMContext):
+async def edit_host_address(callback: CallbackQuery, state: FSMContext):
     host = await resolve_host(callback, "edit_address_host_")
     if host is None:
         return

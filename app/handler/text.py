@@ -58,7 +58,7 @@ async def edit_host_name(message: Message, state: FSMContext):
 
 
 @router.message(StateFilter(FSMHostEditForm.address))
-async def edit_host_name(message: Message, state: FSMContext):
+async def edit_host_address(message: Message, state: FSMContext):
     state_date = await state.get_data()
     host = await resolve_host(message, state, state_date.get('address'))
     if host is None:
