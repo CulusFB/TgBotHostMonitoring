@@ -22,7 +22,7 @@ async def add_host_name(message: Message, state: FSMContext):
 @router.message(StateFilter(FSMHostForm.address))
 async def add_host_address(message: Message, state: FSMContext):
     state_date = await state.get_data()
-    config.HOSTS.add_host(Host(name=state_date.get('name'), address=message.text, status=False))
+    config.HOSTS.add_host(Host(name=state_date.get('name'), address=message.text, status=True))
     logger.success(f"Добавлен новый хост имя: `{state_date.get('name')}`, адрес: `{message.text}`")
     await message.answer(text=LEXICON_RU.get("success_add_host"), reply_markup=create_menu())
     await state.clear()
