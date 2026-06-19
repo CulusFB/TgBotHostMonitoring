@@ -11,7 +11,7 @@ services:
           create_host_path: true
       - type: bind
         source: $PWD/logs
-        target: /hostMonitor/logs
+        target: /hostMonitor/app/logs
         bind:
           create_host_path: true
       - type: bind
