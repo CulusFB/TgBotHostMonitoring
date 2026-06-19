@@ -29,17 +29,20 @@ async def resolve_host(callback: CallbackQuery, prefix: str) -> Optional[Host]:
 
 @router.callback_query(F.data == "host_list", F.from_user.id.in_(config.USERS))
 async def host_list(callback: CallbackQuery):
+    await callback.answer()
     await callback.message.edit_text(text=LEXICON_RU.get("host_list"), reply_markup=host_list_kb())
 
 
 @router.callback_query(F.data == "main_menu", F.from_user.id.in_(config.USERS))
 async def main_menu(callback: CallbackQuery):
+    await callback.answer()
     await callback.message.edit_text(text=LEXICON_RU.get('main_menu'),
                                      reply_markup=create_menu())
 
 
 @router.callback_query(F.data == "add_host", F.from_user.id.in_(config.USERS))
 async def add_host(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
     await callback.message.answer(text=LEXICON_RU.get('host_name'))
     await state.set_state(FSMHostForm.name)
 
@@ -49,6 +52,7 @@ async def host_(callback: CallbackQuery):
     host = await resolve_host(callback, "host_")
     if host is None:
         return
+    await callback.answer()
     available = '🟢' if host.status else '🔴'
     await callback.message.edit_text(text=f"*Имя:* {host.name}\n*Адрес:* {host.address}\n*Доступность:* {available}",
                                      reply_markup=host_menu_kb(host))
@@ -59,6 +63,7 @@ async def delete_host(callback: CallbackQuery):
     host = await resolve_host(callback, "delete_host_")
     if host is None:
         return
+    await callback.answer()
     config.HOSTS.remove_host(host)
     logger.info(f"Хост удалён {host_name_address(host)}")
     await callback.message.edit_text(text=LEXICON_RU.get("deleted_host") + host.name, reply_markup=host_list_kb())
@@ -69,6 +74,7 @@ async def check_host(callback: CallbackQuery):
     host = await resolve_host(callback, "check_host_")
     if host is None:
         return
+    await callback.answer()
     logger.info(f"Ручной запуск проверки хоста {host_name_address(host)}")
     await callback.message.edit_text(text="Подождите идёт проверка доступности")
     try:
@@ -98,6 +104,7 @@ async def edit_host(callback: CallbackQuery):
     host = await resolve_host(callback, "edit_host_")
     if host is None:
         return
+    await callback.answer()
     await callback.message.edit_text(text="Выберите изменяемый параметр", reply_markup=edit_host_kb(host))
 
 
@@ -106,6 +113,7 @@ async def edit_host_name(callback: CallbackQuery, state: FSMContext):
     host = await resolve_host(callback, "edit_name_host_")
     if host is None:
         return
+    await callback.answer()
     await callback.message.answer(text=LEXICON_RU.get("host_name"))
     await state.set_state(FSMHostEditForm.name)
     await state.update_data(address=host.address)
@@ -116,6 +124,7 @@ async def edit_host_name(callback: CallbackQuery, state: FSMContext):
     host = await resolve_host(callback, "edit_address_host_")
     if host is None:
         return
+    await callback.answer()
     await callback.message.answer(text=LEXICON_RU.get("host_address"))
     await state.set_state(FSMHostEditForm.address)
     await state.update_data(address=host.address)
