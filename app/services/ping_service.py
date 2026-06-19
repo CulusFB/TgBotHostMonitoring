@@ -39,6 +39,8 @@ async def ping_host(host: str, max_attempts: int = 3, delay: float = 1.0, backof
             wait_time = delay * (backoff ** (attempt - 1))
             await asyncio.sleep(wait_time)
     logger.warning(f"Все {max_attempts} попытки для хоста `{host}` завершились с ошибками")
+    if last_exception is None:
+        raise ValueError(f"Некорректное число попыток ({max_attempts}) для хоста `{host}`")
     raise last_exception
 
 
